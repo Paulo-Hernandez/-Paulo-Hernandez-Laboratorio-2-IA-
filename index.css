@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+h1, h2 {
+    text-align: center;
+    padding: 20px 0;
+}
+
+nav {
+    background-color: #333;
+    color: #fff;
+    padding: 15px 0;
+    text-align: center;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #ddd;
+}
+
+.team-section {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.team-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.team-section ul li {
+    padding: 10px 0;
+    text-align: center;
+}
+
+.titulo {
+    text-align: center;
+    padding: 20px;
+}
+
+.titulo a {
+    display: inline-block;
+    margin: 20px 0;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+}
+
+.titulo a:hover {
+    background-color: #777;
+}
+
+.Central {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.Central canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+.Central #resultados {
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.Central input[type="file"] {
+    margin: 20px 0;
+}
+
+.Central input[type="button"] {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.Central input[type="button"]:hover {
+    background-color: #777;
+}
