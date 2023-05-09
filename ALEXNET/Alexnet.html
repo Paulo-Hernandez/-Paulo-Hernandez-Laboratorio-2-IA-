@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio 2 IA</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.13.0/dist/tf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/torchscript/0.4.0/torchscript.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <script type="text/javascript" >
+      var modelo = null;
+        //carga de modelo
+        (async()=> {
+            console.log("Cargando modelo...");
+            const response = await fetch("./my_model.pth");
+            const buffer = await response.arrayBuffer();
+            const model = new torchscript.ScriptModule();
+            model.loadState(buffer);
+            modelo = model;
+            console.log("Modelo cargado...");
+        }) ();
+        
+        function predecir() {
+            if (modelo != null) {
+                // Obtener imagen del input file
+                const imagen = document.getElementById('imagen').files[0];
+
+                if (imagen) {
+                    const img = new Image();
+                    img.src = URL.createObjectURL(imagen);
+
+                    img.onload = function() {
+                        const canvas = document.getElementById("canvas");
+                        canvas.width = 227;
+                        canvas.height = 227;
+
+                        const context = canvas.getContext("2d");
+                        context.drawImage(img, 0, 0, 227, 227);
+
+                        // Obtener tensor de entrada
+                        const tensor = tf.tidy(() => {
+                            // Obtener datos de píxeles de la imagen
+                            const imgData = context.getImageData(0, 0, 227, 227).data;
+                            const numPixels = 227 * 227;
+          
+                            // Crear arreglo de valores de píxeles normalizados
+                            const pixels = new Float32Array(numPixels * 3);
+                            let pixelIndex = 0;
+                            for (let i = 0; i < numPixels; i++) {
+                                for (let j = 0; j < 3; j++) {
+                                    pixels[pixelIndex] = imgData[i * 4 + j] / 255;
+                                    pixelIndex++;
+                                }
+                            }
+
+                            // Crear tensor 4D a partir del arreglo de píxeles normalizados
+                            let tensor = tf.tensor4d(pixels, [1, 227, 227, 3]);
+
+                            // Verificar que el tensor tenga 3 canales de color
+                            if (tensor.shape[3] !== 3) {
+                                throw new Error('Imagen no tiene 3 canales de color');
+                            }
+
+                            return tensor;
+                        });
+                        // Realizar predicción con el modelo
+                        const resultado = modelo.predict(tensor).dataSync();
+                        var mayor = Math.max(...resultado);
+                        var clases = ["airplane", "automobile", "bird", "cat", "deer",
+                                      "dog", "frog", "horse", "ship", "truck"];
+
+                            if(mayor > 0.6){
+                              for (let i = 0; i < resultado.length; i++) {
+                                if (resultado[i] === mayor) {
+                                    document.getElementById("resultados").innerHTML = clases[i];
+                                 }
+                               }
+                            } else {
+                                document.getElementById("resultados").innerHTML = "No se puede determinar";
+                            }
+                          } 
+                        }
+                      }  
+                    } 
+
+        
+
+
+    </script>
+
+    <div class="titulo">
+        <h1>Laboratorio 2</h1>
+        <h2>Inteligencia Artificial</h2>
+        <a href="/index.html">Volver</a>
+        <ul>
+            <li>Paulo Hernandez</li>
+            <li>Benjamin Castro</li>
+            <li>Rodrigo Soto</li>
+            <li>Cristobal Aravena</li>
+        </ul>
+        <h2>Modelo AlexNet</h2>
+    </div>
+    <div class="Central">
+        <form action="">
+            <canvas id="canvas" width="227" height="227"></canvas> 
+            <div id="resultados"></div>
+            <input id="imagen" type="file" name="imagen">
+            <input type="button" value="Testear" onclick="predecir()">
+        </form>
+    </div> 
+    <script src="index.js"></script>
+</body>
+</html>
